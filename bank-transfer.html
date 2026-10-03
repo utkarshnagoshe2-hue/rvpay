@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bank Transfer | RV Pay</title><link rel="stylesheet" href="dashboard.css" /><link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell flow-shell"><div class="phone-frame">
+      <header class="flow-header"><a class="back-link" href="dashboard.html" aria-label="Back to Home">&#8249;</a><div class="flow-heading"><h1>Bank Transfer</h1><p>Transfer securely to a bank account</p></div></header>
+      <section class="flow-intro"><h2>Enter bank details</h2><p>Choose a transfer method and send funds directly to the beneficiary.</p></section>
+      <form class="flow-form" action="dashboard.html">
+        <div class="choice-list" aria-label="Transfer method">
+          <label class="choice-card"><input type="radio" name="method" value="imps" checked /><span class="choice-icon blue">IM</span><span><strong>IMPS</strong><small>Instant transfer, available 24/7</small></span></label>
+          <label class="choice-card"><input type="radio" name="method" value="neft" /><span class="choice-icon green">NE</span><span><strong>NEFT</strong><small>Reliable transfer during bank hours</small></span></label>
+        </div>
+        <div class="flow-field"><label for="beneficiary">Beneficiary name</label><input id="beneficiary" name="beneficiary" type="text" placeholder="Full name" required /></div>
+        <div class="flow-field"><label for="account-number">Account number</label><input id="account-number" name="account-number" type="text" inputmode="numeric" placeholder="Enter account number" required /></div>
+        <div class="flow-field"><label for="ifsc">IFSC code</label><input id="ifsc" name="ifsc" type="text" placeholder="e.g. HDFC0001234" required /></div>
+        <div class="flow-field"><label for="bank-amount">Amount</label><input id="bank-amount" name="amount" type="number" min="1" step="0.01" placeholder="₹ 0.00" required /></div>
+        <button class="form-submit blue" type="submit">Review transfer</button>
+      </form>
+    </div></main>
+    <nav class="bottom-nav" aria-label="Bottom navigation"><a class="bottom-nav__item active" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a><a class="bottom-nav__item" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a><a class="bottom-nav__item" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a></nav>
+  </body>
+</html>

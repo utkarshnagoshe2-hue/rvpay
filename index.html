@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f7fc" />
+    <title>RVPay | Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <div class="background-shape background-shape--top" aria-hidden="true"></div>
+      <div class="background-shape background-shape--bottom" aria-hidden="true"></div>
+
+      <section class="login-panel" aria-labelledby="welcome-title">
+        <a class="brand" href="#" aria-label="RVPay home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span>RV<span class="brand-accent">Pay</span></span>
+        </a>
+
+        <div class="intro">
+          <p class="eyebrow">Secure access</p>
+          <h1 id="welcome-title">Welcome to RVPay</h1>
+          <p class="subtitle">Login to your account</p>
+        </div>
+
+        <form id="login-form" class="login-form">
+          <label class="field-label" for="login-contact">Email or mobile number</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.75h16v10.5H4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m4.5 7.5 7.5 5.25 7.5-5.25" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input id="login-contact" name="contact" type="text" placeholder="Enter email or mobile number" autocomplete="username" required />
+          </div>
+
+          <div class="password-heading">
+            <label class="field-label" for="password">Password</label>
+            <a href="forgot-password.html" class="text-link">forgot password?</a>
+          </div>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 14v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required />
+            <button class="icon-button" id="toggle-password" type="button" aria-label="Show password">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3.5 12s3-5 8.5-5 8.5 5 8.5 5-3 5-8.5 5-8.5-5-8.5-5Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.2" stroke="currentColor" stroke-width="1.7"/></svg>
+            </button>
+          </div>
+
+          <label class="remember"><input id="remember" type="checkbox" /><span class="checkmark" aria-hidden="true"></span><span>Remember me</span></label>
+          <button class="submit-button" type="submit">Login Now <span aria-hidden="true">&rarr;</span></button>
+          <p id="form-message" class="form-message" role="status"></p>
+        </form>
+
+        <p class="register-prompt">Don’t have an account? <a href="register.html" class="text-link">Create Account</a></p>
+        <p class="footer-note"><span class="shield" aria-hidden="true">&#10003;</span> Your information is protected</p>
+        <div class="footer-note" style="margin-top: 10px; gap: 14px;">
+          <a href="privacy.html" class="text-link">Privacy</a>
+          <a href="terms.html" class="text-link">Terms</a>
+        </div>
+      </section>
+    </main>
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <div class="phone-frame">
+        <header class="user-header">
+          <div class="profile-wrap">
+            <div class="welcome-copy">
+              <p class="company-name">RV Pay</p>
+              <h1>Welcome, <span id="user-name">No profile data</span></h1>
+            </div>
+          </div>
+
+          <a class="profile-avatar" id="profile-avatar" href="profile.html" aria-label="Open profile">-</a>
+        </header>
+
+        <section class="linked-accounts-card" aria-labelledby="linked-accounts-title">
+          <p class="card-eyebrow" id="linked-accounts-title">Linked Accounts</p>
+          <p class="linked-accounts-description">Manage connected banks</p>
+          <p class="linked-accounts-count" id="linked-accounts-count">No accounts connected</p>
+          <a class="account-link" href="manage-accounts.html">Manage Accounts <span>›</span></a>
+        </section>
+
+        <section class="quick-actions">
+          <h3>Quick Actions</h3>
+
+          <div class="action-grid">
+            <a class="action-tile purple" href="scan-pay.html">
+              <span class="tile-icon icon-scan" aria-hidden="true">
+                <img src="asset/icon/qr_code_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" />
+              </span>
+              <div class="tile-copy">
+                <span class="tile-title">Scan &amp; Pay</span>
+                <small>Scan any QR</small>
+              </div>
+              <span class="tile-arrow">›</span>
+            </a>
+
+            <a class="action-tile green" href="send-money.html">
+              <span class="tile-icon icon-send">
+                <img src="asset/icon/send_money_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" />
+              </span>
+              <div class="tile-copy">
+                <span class="tile-title">Send Money</span>
+                <small>UPI Transfer</small>
+              </div>
+              <span class="tile-arrow">›</span>
+            </a>
+
+            <a class="action-tile blue" href="bank-transfer.html">
+              <span class="tile-icon icon-bank">
+                <img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" />
+              </span>
+              <div class="tile-copy">
+                <span class="tile-title">Bank Transfer</span>
+                <small>NEFT, IMPS, RTGS</small>
+              </div>
+              <span class="tile-arrow">›</span>
+            </a>
+
+            <a class="action-tile orange" href="#">
+              <span class="tile-icon icon-mobile">
+                <span class="phone-screen"></span>
+              </span>
+              <div class="tile-copy">
+                <span class="tile-title">Mobile Recharge</span>
+                <small>Recharge any number</small>
+              </div>
+              <span class="tile-arrow">›</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="transactions">
+          <div class="section-head">
+            <h3>Recent Transactions</h3>
+            <a href="history.html">View All</a>
+          </div>
+
+          <div class="transaction-list" id="recent-transactions"><p class="empty-history" id="recent-transactions-empty">No transactions found</p></div>
+        </section>
+
+        <nav class="bottom-nav" aria-label="Bottom navigation">
+          <a class="bottom-nav__item active" href="dashboard.html" aria-label="Home">
+            <span class="bottom-nav__icon">
+              <img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" />
+            </span>
+            <span class="bottom-nav__label">Home</span>
+          </a>
+          <a class="bottom-nav__item" href="history.html" aria-label="History">
+            <span class="bottom-nav__icon">
+              <img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" />
+            </span>
+            <span class="bottom-nav__label">History</span>
+          </a>
+          <a class="bottom-nav__item" href="profile.html" aria-label="Profile">
+            <span class="bottom-nav__icon">
+              <img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" />
+            </span>
+            <span class="bottom-nav__label">Profile</span>
+          </a>
+        </nav>
+      </div>
+    </div>
+    <script src="api.js"></script>
+    <script>
+      const userName = document.querySelector('#user-name');
+      const profileAvatar = document.querySelector('#profile-avatar');
+      const linkedAccountsCount = document.querySelector('#linked-accounts-count');
+
+      window.RVPayAPI.getProfile().then(({ user }) => {
+        const displayName = String(user.name || '').trim();
+        const firstName = displayName.split(/\s+/)[0] || 'No profile data';
+        if (userName) userName.textContent = firstName;
+        if (profileAvatar) {
+          profileAvatar.textContent = displayName ? displayName.charAt(0).toUpperCase() : '-';
+          profileAvatar.setAttribute('aria-label', `Open ${displayName || 'profile'} profile`);
+        }
+      }).catch(() => {
+        if (userName) userName.textContent = 'No profile data';
+        if (profileAvatar) profileAvatar.textContent = '-';
+      });
+
+      if (linkedAccountsCount) linkedAccountsCount.textContent = 'Loading accounts...';
+      window.RVPayAPI.getAccounts().then(({ accounts }) => {
+        const accountCount = accounts.length;
+        if (linkedAccountsCount) {
+          linkedAccountsCount.textContent = accountCount === 0
+            ? 'No accounts connected'
+            : `${accountCount} Account${accountCount === 1 ? '' : 's'} Connected`;
+        }
+      }).catch(() => {
+        if (linkedAccountsCount) linkedAccountsCount.textContent = 'Unable to load accounts';
+      });
+
+      const recentTransactions = document.querySelector('#recent-transactions');
+      const recentTransactionsEmpty = document.querySelector('#recent-transactions-empty');
+      const renderRecentTransactions = (transactions) => {
+        recentTransactions.querySelectorAll('.transaction-row').forEach((row) => row.remove());
+        [...transactions].sort((first, second) => new Date(second.createdAt || second.date) - new Date(first.createdAt || first.date)).slice(0, 3).forEach((transaction) => {
+        const row = document.createElement('div');
+        row.className = 'transaction-row';
+        const main = document.createElement('div');
+        main.className = 'transaction-main';
+        const badge = document.createElement('span');
+        badge.className = 'tx-badge green';
+        badge.textContent = '↗';
+        const copy = document.createElement('div');
+        copy.className = 'tx-copy';
+        const recipient = document.createElement('strong');
+        recipient.textContent = `To ${transaction.recipientName || 'Recipient unavailable'}`;
+        const detail = document.createElement('small');
+        detail.textContent = transaction.transactionId || 'Transaction ID unavailable';
+        copy.append(recipient, detail);
+        main.append(badge, copy);
+        const meta = document.createElement('div');
+        meta.className = 'transaction-meta';
+        const amount = document.createElement('span');
+        amount.className = 'amount out';
+        amount.textContent = `- ₹${Number(transaction.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        const date = document.createElement('small');
+        date.textContent = `${transaction.date || 'Date unavailable'}${transaction.time ? `, ${transaction.time}` : ''}`;
+        meta.append(amount, date);
+        row.append(main, meta);
+        recentTransactions.insertBefore(row, recentTransactionsEmpty);
+      });
+        recentTransactionsEmpty.hidden = transactions.length > 0;
+      };
+      window.RVPayAPI.getTransactions().then(({ transactions }) => {
+        renderRecentTransactions(transactions || []);
+      }).catch((error) => {
+        recentTransactionsEmpty.textContent = error.message;
+        recentTransactionsEmpty.hidden = false;
+      });
+    </script>
+  </body>
+</html>

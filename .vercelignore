@@ -1,0 +1,16 @@
+.env*
+.git/
+.gitignore
+node_modules/
+package.json
+package-lock.json
+server.js
+render.yaml
+controllers/
+middleware/
+models/
+routes/
+services/
+untitled/
+DEPLOYMENT_CHECKLIST.md
+GITHUB_PREPARATION_CHECKLIST.md

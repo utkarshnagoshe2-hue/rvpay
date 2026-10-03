@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f7fc" />
+    <title>RVPay | Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <div class="background-shape background-shape--top" aria-hidden="true"></div>
+      <div class="background-shape background-shape--bottom" aria-hidden="true"></div>
+
+      <section class="login-panel register-panel" aria-labelledby="welcome-title">
+        <a class="brand" href="index.html" aria-label="RVPay home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span>RV<span class="brand-accent">Pay</span></span>
+        </a>
+
+        <div class="intro">
+          <p class="eyebrow">Join RVPay</p>
+          <h1 id="welcome-title">Welcome to RVPay</h1>
+          <p class="subtitle">Create Your Account</p>
+        </div>
+
+        <form id="register-form" class="login-form">
+          <label class="field-label" for="full-name">Full name</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M5.5 19.2c.7-3 2.9-4.7 6.5-4.7s5.8 1.7 6.5 4.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <input id="full-name" name="full-name" type="text" placeholder="Enter your full name" autocomplete="name" required />
+          </div>
+
+          <label class="field-label" for="register-email">Email address</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 6.75h16v10.5H4z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m4.5 7.5 7.5 5.25 7.5-5.25" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input id="register-email" name="email" type="email" placeholder="Enter your email" autocomplete="email" required />
+          </div>
+
+          <label class="field-label" for="phone">Mobile number</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="3.5" width="10" height="17" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M10.5 17.5h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <input id="phone" name="phone" type="tel" placeholder="Enter your mobile number" autocomplete="tel" required />
+          </div>
+
+          <label class="field-label" for="register-password">Password</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <input id="register-password" name="password" type="password" placeholder="Create a password" autocomplete="new-password" minlength="8" required />
+            <button class="icon-button" id="toggle-register-password" type="button" aria-label="Show password"><span aria-hidden="true">&#9673;</span></button>
+          </div>
+
+          <label class="field-label" for="confirm-password">Confirm password</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="m9 15 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <input id="confirm-password" name="confirm-password" type="password" placeholder="Confirm your password" autocomplete="new-password" minlength="8" required />
+          </div>
+
+          <label class="terms-check"><input id="terms" type="checkbox" required /><span class="checkmark" aria-hidden="true"></span><span>By register you agree to our <a href="terms.html" class="text-link">Terms and Conditions</a> and <a href="privacy.html" class="text-link">Privacy Policy</a></span></label>
+          <button class="submit-button" type="submit">Create Account <span aria-hidden="true">&rarr;</span></button>
+          <p id="register-message" class="form-message" role="status"></p>
+        </form>
+
+        <p class="register-prompt">Already have an account? <a href="index.html" class="text-link">Login</a></p>
+        <div class="footer-note" style="margin-top: 10px; gap: 14px;">
+          <a href="privacy.html" class="text-link">Privacy</a>
+          <a href="terms.html" class="text-link">Terms</a>
+        </div>
+      </section>
+    </main>
+    <script src="api.js"></script>
+    <script src="register.js"></script>
+  </body>
+</html>

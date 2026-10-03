@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Accounts | RV Pay</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell flow-shell">
+      <div class="phone-frame">
+        <header class="flow-header manage-header"><a class="back-link" href="profile.html" aria-label="Back to Profile">&#8249;</a><div class="flow-heading"><h1>Linked Accounts</h1><p>Manage your connected bank accounts</p></div><button class="add-account-button" id="open-modal" type="button">+ Add Account</button></header>
+        <section class="accounts-list" id="accounts-list" aria-label="Linked bank accounts"></section>
+      </div>
+    </main>
+    <nav class="bottom-nav" aria-label="Bottom navigation"><a class="bottom-nav__item" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a><a class="bottom-nav__item" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a><a class="bottom-nav__item active" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a></nav>
+
+    <div class="modal-overlay" id="account-modal" hidden>
+      <section class="account-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-heading"><div><h2 id="modal-title">Add New Account</h2><p>Securely connect another bank account.</p></div><button class="modal-close" id="close-modal" type="button" aria-label="Close dialog">&times;</button></div>
+        <form class="modal-form" id="account-form">
+          <div class="flow-field"><label for="account-holder">Account Holder Name</label><input id="account-holder" name="holder" type="text" required /></div>
+          <div class="flow-field"><label for="bank-name">Bank Name</label><input id="bank-name" name="bank" type="text" required /></div>
+          <div class="flow-field"><label for="account-number">Account Number</label><input id="account-number" name="number" type="text" inputmode="numeric" minlength="8" required /></div>
+          <div class="flow-field"><label for="confirm-number">Confirm Account Number</label><input id="confirm-number" name="confirm" type="text" inputmode="numeric" minlength="8" required /></div>
+          <div class="flow-field"><label for="ifsc-code">IFSC Code</label><input id="ifsc-code" name="ifsc" type="text" required /></div>
+          <div class="modal-actions"><button class="modal-cancel" id="cancel-modal" type="button">Cancel</button><button class="modal-submit" type="submit">Verify &amp; Add</button></div>
+        </form>
+      </section>
+    </div>
+    <script src="api.js"></script>
+    <script>
+      let accounts = [];
+      const list = document.querySelector('#accounts-list');
+      const modal = document.querySelector('#account-modal');
+      const form = document.querySelector('#account-form');
+      const maskAccount = (number) => `XXXX XXXX ${String(number).slice(-4)}`;
+      const renderAccounts = () => {
+        list.replaceChildren();
+        if (!accounts.length) { const empty = document.createElement('p'); empty.className = 'empty-accounts'; empty.textContent = 'No linked accounts yet'; list.append(empty); return; }
+        accounts.forEach((account) => {
+          const card = document.createElement('article'); card.className = 'account-card';
+          const head = document.createElement('div'); head.className = 'account-card__head';
+          const identity = document.createElement('div'); identity.className = 'bank-identity';
+          const mark = document.createElement('span'); mark.className = 'bank-mark'; mark.textContent = account.bank.charAt(0).toUpperCase();
+          const bankCopy = document.createElement('div'); const bank = document.createElement('strong'); bank.textContent = account.bank; const ifsc = document.createElement('small'); ifsc.textContent = `IFSC ${account.ifsc}`; bankCopy.append(bank, ifsc); identity.append(mark, bankCopy);
+          const status = document.createElement('span'); status.className = 'connected-status'; status.textContent = 'Connected'; head.append(identity, status);
+          const meta = document.createElement('div'); meta.className = 'account-card__meta';
+          const details = document.createElement('div'); const holderLabel = document.createElement('span'); holderLabel.textContent = 'Account Holder'; const holder = document.createElement('strong'); holder.className = 'account-holder'; holder.textContent = account.holder; const number = document.createElement('span'); number.textContent = maskAccount(account.number); details.append(holderLabel, holder, number);
+          const unlink = document.createElement('button'); unlink.className = 'unlink-button'; unlink.type = 'button'; unlink.textContent = 'Unlink'; unlink.addEventListener('click', async () => { if (window.confirm('Are you sure you want to unlink this account?')) { try { await window.RVPayAPI.deleteAccount(account.id); accounts = accounts.filter((item) => item.id !== account.id); renderAccounts(); } catch (error) { window.alert(error.message); } } }); meta.append(details, unlink); card.append(head, meta); list.append(card);
+        });
+      };
+      const closeModal = () => { modal.hidden = true; form.reset(); };
+      document.querySelector('#open-modal').addEventListener('click', () => { modal.hidden = false; document.querySelector('#account-holder').focus(); });
+      document.querySelector('#close-modal').addEventListener('click', closeModal);
+      document.querySelector('#cancel-modal').addEventListener('click', closeModal);
+      modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
+      form.addEventListener('submit', async (event) => { event.preventDefault(); const data = new FormData(form); if (data.get('number') !== data.get('confirm')) { document.querySelector('#confirm-number').setCustomValidity('Account numbers do not match.'); document.querySelector('#confirm-number').reportValidity(); return; } document.querySelector('#confirm-number').setCustomValidity(''); try { const response = await window.RVPayAPI.addAccount({ bank: data.get('bank').trim(), holder: data.get('holder').trim(), number: data.get('number').trim(), ifsc: data.get('ifsc').trim().toUpperCase() }); accounts.unshift(response.account); renderAccounts(); closeModal(); } catch (error) { window.alert(error.message); } });
+      const loadAccounts = async () => {
+        list.textContent = 'Loading linked accounts...';
+        try {
+          const response = await window.RVPayAPI.getAccounts();
+          accounts = response.accounts || [];
+          renderAccounts();
+        } catch (error) {
+          list.replaceChildren();
+          const message = document.createElement('p');
+          message.className = 'empty-accounts';
+          message.textContent = error.message;
+          list.append(message);
+        }
+      };
+      loadAccounts();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: rvpay-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: ACCOUNT_ENCRYPTION_KEY
+        sync: false
+      - key: RETURN_PASSWORD_RESET_TOKEN
+        value: "false"

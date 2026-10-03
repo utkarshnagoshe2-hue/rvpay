@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Add Account | RV Pay</title><link rel="stylesheet" href="dashboard.css" /><link rel="stylesheet" href="styles.css" /></head>
+  <body><main class="dashboard-shell flow-shell"><div class="phone-frame">
+    <header class="flow-header"><a class="back-link" href="dashboard.html" aria-label="Back to Home">&#8249;</a><div class="flow-heading"><h1>Add account</h1><p>Connect a bank account</p></div></header>
+    <section class="flow-intro"><h2>Link your bank account</h2><p>Use your account to add money and make seamless payments.</p></section>
+    <form class="flow-form" id="add-account-form" action="dashboard.html"><div class="flow-field"><label for="bank-name">Bank name</label><input id="bank-name" name="bank" type="text" placeholder="Bank name" required /></div><div class="flow-field"><label for="account-holder">Account holder name</label><input id="account-holder" name="holder" type="text" placeholder="As per bank records" required /></div><div class="flow-field"><label for="new-account">Account number</label><input id="new-account" name="number" type="text" inputmode="numeric" placeholder="Enter account number" required /></div><div class="flow-field"><label for="new-ifsc">IFSC code</label><input id="new-ifsc" name="ifsc" type="text" placeholder="e.g. SBIN0001234" required /></div><div class="helper-note"><span aria-hidden="true">&#128274;</span><span>Your bank details are encrypted and never shared.</span></div><button class="form-submit" type="submit">Link account</button><p id="account-message" class="form-message" role="status"></p></form>
+  </div></main><nav class="bottom-nav" aria-label="Bottom navigation"><a class="bottom-nav__item active" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a><a class="bottom-nav__item" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a><a class="bottom-nav__item" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a></nav>
+    <script src="api.js"></script>
+    <script>
+      const addAccountForm = document.querySelector('#add-account-form');
+      const accountMessage = document.querySelector('#account-message');
+      addAccountForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const data = new FormData(addAccountForm);
+        try {
+          await window.RVPayAPI.addAccount({
+            bank: String(data.get('bank')).trim(),
+            holder: String(data.get('holder')).trim(),
+            number: String(data.get('number')).trim(),
+            ifsc: String(data.get('ifsc')).trim().toUpperCase(),
+          });
+          window.location.href = addAccountForm.action;
+        } catch (error) {
+          accountMessage.textContent = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>

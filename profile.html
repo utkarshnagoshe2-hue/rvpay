@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile | RV Pay</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell flow-shell">
+      <div class="phone-frame profile-page">
+        <header class="flow-header"><a class="back-link" href="dashboard.html" aria-label="Back to Home">&#8249;</a><div class="flow-heading"><h1>Profile</h1><p>Your account and preferences</p></div></header>
+        <section class="profile-hero"><div class="profile-avatar--large" id="profile-avatar">-</div><div><h2 id="profile-name">No profile data</h2><p>Profile details</p></div></section>
+        <form class="profile-details" id="profile-form" aria-label="Profile details"><div class="profile-detail"><span>Name</span><input id="profile-name-input" name="name" type="text" required disabled /></div><div class="profile-detail"><span>Mobile Number</span><input id="profile-phone-input" name="phone" type="tel" required disabled /></div><div class="profile-detail"><span>Email</span><input id="profile-email-input" name="email" type="email" required disabled /></div><div class="modal-actions profile-actions"><button class="modal-cancel" id="edit-profile-button" type="button">Edit Profile</button><button class="modal-submit" id="save-profile-button" type="submit" hidden>Save</button><button class="modal-cancel" id="cancel-profile-button" type="button" hidden>Cancel</button></div><p id="profile-message" class="form-message" role="status"></p></form>
+        <nav class="profile-menu" aria-label="Profile menu"><a href="settings.html">Settings</a><a href="privacy.html">Privacy Policy</a><a href="mailto:support@rvpay.example">Help &amp; Support</a></nav>
+        <a class="logout-button" id="logout-button" href="index.html">Log out</a>
+      </div>
+    </main>
+    <nav class="bottom-nav" aria-label="Bottom navigation"><a class="bottom-nav__item" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a><a class="bottom-nav__item" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a><a class="bottom-nav__item active" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a></nav>
+  <script src="api.js"></script>
+  <script>
+      const nameInput = document.querySelector('#profile-name-input');
+      const phoneInput = document.querySelector('#profile-phone-input');
+      const emailInput = document.querySelector('#profile-email-input');
+      const profileForm = document.querySelector('#profile-form');
+      const profileMessage = document.querySelector('#profile-message');
+      const editProfileButton = document.querySelector('#edit-profile-button');
+      const saveProfileButton = document.querySelector('#save-profile-button');
+      const cancelProfileButton = document.querySelector('#cancel-profile-button');
+      let currentProfile = null;
+      const setEditing = (editing) => {
+        nameInput.disabled = !editing;
+        phoneInput.disabled = !editing;
+        emailInput.disabled = !editing;
+        editProfileButton.hidden = editing;
+        saveProfileButton.hidden = !editing;
+        cancelProfileButton.hidden = !editing;
+        if (editing) nameInput.focus();
+      };
+      const renderProfile = (profile) => {
+        const displayName = String(profile.name || 'No profile data').trim() || 'No profile data';
+        document.querySelector('#profile-name').textContent = displayName;
+        document.querySelector('#profile-avatar').textContent = profile.name ? displayName.charAt(0).toUpperCase() : '-';
+        nameInput.value = profile.name || '';
+        phoneInput.value = profile.phone || '';
+        emailInput.value = profile.email || '';
+      };
+      setEditing(false);
+      editProfileButton.disabled = true;
+      editProfileButton.addEventListener('click', () => {
+        profileMessage.textContent = '';
+        setEditing(true);
+      });
+      cancelProfileButton.addEventListener('click', () => {
+        if (currentProfile) renderProfile(currentProfile);
+        profileMessage.textContent = '';
+        setEditing(false);
+      });
+      profileForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const updates = {
+          name: nameInput.value.trim(),
+          phone: phoneInput.value.trim(),
+          email: emailInput.value.trim(),
+        };
+        saveProfileButton.disabled = true;
+        try {
+          const response = await window.RVPayAPI.updateProfile(updates);
+          currentProfile = response.user;
+          renderProfile(currentProfile);
+          setEditing(false);
+          profileMessage.textContent = 'Profile saved.';
+        } catch (error) {
+          profileMessage.textContent = error.message;
+        } finally {
+          saveProfileButton.disabled = false;
+        }
+      });
+      window.RVPayAPI.getProfile().then((response) => {
+        currentProfile = response.user;
+        renderProfile(currentProfile);
+        editProfileButton.disabled = false;
+      }).catch((error) => {
+        renderProfile({});
+        profileMessage.textContent = error.message;
+      });
+      document.querySelector('#logout-button').addEventListener('click', () => {
+        window.RVPayAPI.logout();
+      });
+    </script>
+  </body>
+</html>

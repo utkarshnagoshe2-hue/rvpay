@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings | RV Pay</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell flow-shell">
+      <div class="phone-frame">
+        <header class="flow-header"><a class="back-link" href="profile.html" aria-label="Back to Profile">&#8249;</a><div class="flow-heading"><h1>Settings</h1><p>Manage your RV Pay preferences</p></div></header>
+        <section class="settings-list" aria-label="Settings options"><a class="settings-link" href="profile.html"><span><b class="choice-icon purple" aria-hidden="true">P</b><span><strong>Personal details</strong><small>Review your profile information</small></span></span><b class="settings-arrow" aria-hidden="true">&#8250;</b></a><a class="settings-link" href="manage-accounts.html"><span><b class="choice-icon blue" aria-hidden="true">B</b><span><strong>Linked Accounts</strong><small>Manage your connected bank accounts</small></span></span><b class="settings-arrow" aria-hidden="true">&#8250;</b></a><label class="settings-link" for="theme-setting"><span><b class="choice-icon purple" aria-hidden="true">T</b><span><strong>Theme</strong><small>Choose your display theme</small></span></span><select id="theme-setting" aria-label="Theme"><option value="light">Light</option><option value="dark">Dark</option></select></label><label class="settings-link" for="notifications-setting"><span><b class="choice-icon green" aria-hidden="true">N</b><span><strong>Notifications</strong><small>Receive payment updates</small></span></span><input id="notifications-setting" type="checkbox" /></label><a class="settings-link" href="privacy.html"><span><b class="choice-icon green" aria-hidden="true">S</b><span><strong>Privacy &amp; security</strong><small>Keep your account protected</small></span></span><b class="settings-arrow" aria-hidden="true">&#8250;</b></a></section>
+      </div>
+    </main>
+    <nav class="bottom-nav" aria-label="Bottom navigation"><a class="bottom-nav__item" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a><a class="bottom-nav__item" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a><a class="bottom-nav__item active" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a></nav>
+    <script>
+      const settingsKey = 'rvpay-settings';
+      const themeSetting = document.querySelector('#theme-setting');
+      const notificationsSetting = document.querySelector('#notifications-setting');
+      let settings = { theme: 'light', notifications: true };
+      try {
+        const storedSettings = JSON.parse(localStorage.getItem(settingsKey) || 'null');
+        if (storedSettings && typeof storedSettings === 'object') settings = { ...settings, ...storedSettings };
+      } catch (error) {
+        settings = { theme: 'light', notifications: true };
+      }
+      themeSetting.value = settings.theme === 'dark' ? 'dark' : 'light';
+      notificationsSetting.checked = settings.notifications !== false;
+      const saveSettings = () => {
+        settings = { theme: themeSetting.value, notifications: notificationsSetting.checked };
+        localStorage.setItem(settingsKey, JSON.stringify(settings));
+      };
+      themeSetting.addEventListener('change', saveSettings);
+      notificationsSetting.addEventListener('change', saveSettings);
+      saveSettings();
+    </script>
+  </body>
+</html>

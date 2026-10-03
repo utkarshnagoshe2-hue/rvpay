@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RVPay | Admin Users</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html">RV<span>Pay</span> Admin</a><nav class="admin-nav" aria-label="Admin navigation"><a href="admin-dashboard.html">Dashboard</a><a class="active" href="admin-users.html">Users</a><a href="admin-transactions.html">Transactions</a></nav></aside>
+      <main class="admin-main"><header class="admin-header"><div><h1>Users</h1><p>Review and manage application users.</p></div><a class="admin-link" href="admin-dashboard.html">Dashboard</a></header><p class="admin-empty" id="admin-message" role="status"></p><section class="admin-panel"><div class="admin-toolbar"><input id="user-search" type="search" placeholder="Search users" aria-label="Search users" /></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Status</th><th>Actions</th></tr></thead><tbody id="users-body"></tbody></table><p class="admin-empty" id="users-empty" hidden>No users found.</p></div></section></main>
+    </div>
+    <script src="api.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

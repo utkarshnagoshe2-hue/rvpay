@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment App Bottom Nav</title>
+    <style>
+      * { box-sizing: border-box; }
+
+      :root {
+        --bg: #f3f3f8;
+        --surface: #ffffff;
+        --text: #1f2430;
+        --muted: #7e8596;
+        --purple: #5f4ae9;
+        --purple-soft: rgba(95, 74, 233, 0.12);
+        --shadow: 0 -10px 30px rgba(15, 23, 42, 0.08);
+      }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--text);
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+      }
+
+      .app-shell {
+        position: relative;
+        width: min(100%, 430px);
+        min-height: 100vh;
+        background: #f9f9fb;
+      }
+
+      .content {
+        padding: 28px 24px 110px;
+      }
+
+      .placeholder-card {
+        height: 180px;
+        border-radius: 26px;
+        background: linear-gradient(135deg, #e8e5ff, #f5f5ff);
+        border: 1px solid rgba(95, 74, 233, 0.08);
+      }
+
+      .bottom-nav {
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: min(100%, 430px);
+        background: var(--surface);
+        border-radius: 24px 24px 0 0;
+        box-shadow: var(--shadow);
+        padding: 12px 18px 20px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        z-index: 10;
+      }
+
+      .nav-item {
+        appearance: none;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 8px 0;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .nav-item .icon-wrap {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        transition: 0.2s ease;
+      }
+
+      .nav-item span {
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+      }
+
+      .nav-item.active {
+        color: var(--purple);
+      }
+
+      .nav-item.active .icon-wrap {
+        background: var(--purple-soft);
+      }
+
+      .nav-item svg {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+
+      .nav-item.active svg {
+        stroke: var(--purple);
+      }
+
+      .nav-item svg path,
+      .nav-item svg rect,
+      .nav-item svg circle,
+      .nav-item svg line,
+      .nav-item svg polyline,
+      .nav-item svg polygon {
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      @media (max-width: 430px) {
+        .app-shell {
+          min-height: 100vh;
+        }
+
+        .bottom-nav {
+          border-radius: 18px 18px 0 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="content">
+        <div class="placeholder-card"></div>
+      </div>
+
+      <nav class="bottom-nav" aria-label="Bottom navigation">
+        <button class="nav-item active" type="button" aria-label="Home">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 10.5 12 3l9 7.5"></path>
+              <path d="M5 9.5V20h14V9.5"></path>
+            </svg>
+          </div>
+          <span>Home</span>
+        </button>
+
+        <button class="nav-item" type="button" aria-label="History">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+              <path d="M3 4v6h6"></path>
+              <path d="M12 7v5l3 2"></path>
+            </svg>
+          </div>
+          <span>History</span>
+        </button>
+
+        <button class="nav-item" type="button" aria-label="Profile">
+          <div class="icon-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 20c1.5-3.5 5-5 8-5s6.5 1.5 8 5"></path>
+            </svg>
+          </div>
+          <span>Profile</span>
+        </button>
+      </nav>
+    </div>
+  </body>
+</html>

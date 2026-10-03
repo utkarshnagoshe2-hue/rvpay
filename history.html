@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History | RV Pay</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell flow-shell">
+      <div class="phone-frame history-page">
+        <header class="flow-header"><a class="back-link" href="dashboard.html" aria-label="Back to Home">&#8249;</a><div class="flow-heading"><h1>Transaction History</h1><p>Review your recent payment activity</p></div></header>
+        <div class="history-tools">
+          <label class="search-box" for="transaction-search"><span aria-hidden="true">&#128269;</span><input id="transaction-search" type="search" placeholder="Search transactions" /></label>
+          <div class="filter-row" aria-label="Date filters"><button class="filter-chip active" type="button" data-period="all">All</button><button class="filter-chip" type="button" data-period="today">Today</button><button class="filter-chip" type="button" data-period="week">This Week</button><button class="filter-chip" type="button" data-period="month">This Month</button></div>
+          <div class="status-row" aria-label="Status filters"><button class="status-chip active" type="button" data-status="all">All status</button><button class="status-chip" type="button" data-status="Success">Success</button><button class="status-chip" type="button" data-status="Pending">Pending</button><button class="status-chip" type="button" data-status="Failed">Failed</button></div>
+        </div>
+        <section class="history-list" id="history-list" aria-label="Transactions">
+          <p class="empty-history" id="empty-history" hidden>No transactions found</p>
+        </section>
+      </div>
+    </main>
+    <nav class="bottom-nav" aria-label="Bottom navigation"><a class="bottom-nav__item" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a><a class="bottom-nav__item active" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a><a class="bottom-nav__item" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a></nav>
+    <script src="api.js"></script>
+    <script>
+      const searchInput = document.querySelector('#transaction-search');
+      const historyList = document.querySelector('#history-list');
+      const emptyState = document.querySelector('#empty-history');
+      let selectedPeriod = 'all';
+      let selectedStatus = 'all';
+      let transactions = [];
+
+      const getTransactionTime = (transaction) => {
+        if (transaction.createdAt) return new Date(transaction.createdAt).getTime();
+        const idTimestamp = String(transaction.transactionId || '').match(/^RV(\d{13})$/);
+        return idTimestamp ? Number(idTimestamp[1]) : 0;
+      };
+
+      const getPeriod = (transaction) => {
+        const transactionDate = new Date(getTransactionTime(transaction));
+        const currentDate = new Date();
+        if (transactionDate.toDateString() === currentDate.toDateString()) return 'today';
+        const daysAgo = (currentDate.getTime() - transactionDate.getTime()) / 86400000;
+        if (daysAgo >= 0 && daysAgo <= 7) return 'week';
+        if (transactionDate.getMonth() === currentDate.getMonth() && transactionDate.getFullYear() === currentDate.getFullYear()) return 'month';
+        return 'older';
+      };
+
+      const renderTransactions = () => {
+        historyList.querySelectorAll('.transaction-card').forEach((card) => card.remove());
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+        [...transactions].sort((first, second) => getTransactionTime(second) - getTransactionTime(first)).forEach((transaction) => {
+          const status = String(transaction.status || 'Success');
+          const recipient = String(transaction.recipientName || 'Recipient unavailable');
+          const transactionId = String(transaction.transactionId || 'Unavailable');
+          const searchableText = `${transactionId} ${recipient} ${transaction.amount} ${transaction.date} ${status}`.toLowerCase();
+          if (!searchableText.includes(query) || (selectedPeriod !== 'all' && getPeriod(transaction) !== selectedPeriod) || (selectedStatus !== 'all' && status !== selectedStatus)) return;
+
+          const card = document.createElement('article');
+          card.className = 'transaction-card';
+          card.innerHTML = `<div class="transaction-card__top"><span class="history-icon-badge purple">&#8599;</span><span class="transaction-status ${status.toLowerCase()}">${status}</span></div><div class="transaction-card__body"><div><span class="transaction-label">Recipient</span><strong></strong></div><strong class="history-amount">- ₹${Number(transaction.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></div><div class="transaction-card__meta"><span>ID: ${transactionId}</span><span>${transaction.date || 'Date unavailable'}${transaction.time ? `, ${transaction.time}` : ''}</span></div>`;
+          card.querySelector('.transaction-card__body strong').textContent = recipient;
+          historyList.insertBefore(card, emptyState);
+          visibleCount += 1;
+        });
+        emptyState.hidden = visibleCount > 0;
+      };
+
+      searchInput.addEventListener('input', renderTransactions);
+      document.querySelectorAll('[data-period]').forEach((button) => button.addEventListener('click', () => {
+        selectedPeriod = button.dataset.period;
+        document.querySelectorAll('[data-period]').forEach((item) => item.classList.toggle('active', item === button));
+        renderTransactions();
+      }));
+      document.querySelectorAll('[data-status]').forEach((button) => button.addEventListener('click', () => {
+        selectedStatus = button.dataset.status;
+        document.querySelectorAll('[data-status]').forEach((item) => item.classList.toggle('active', item === button));
+        renderTransactions();
+      }));
+      window.RVPayAPI.getTransactions().then((response) => {
+        transactions = response.transactions || [];
+        renderTransactions();
+      }).catch((error) => {
+        transactions = [];
+        emptyState.textContent = error.message;
+        renderTransactions();
+      });
+    </script>
+  </body>
+</html>

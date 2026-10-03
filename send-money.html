@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Send Money | RV Pay</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell flow-shell">
+      <div class="phone-frame">
+        <header class="flow-header">
+          <a class="back-link" href="dashboard.html" aria-label="Back to Home">&#8249;</a>
+          <div class="flow-heading"><h1>Send Money</h1><p>Fast UPI payments</p></div>
+        </header>
+        <section class="flow-intro"><h2>Who would you like to pay?</h2><p>Send money instantly to a contact or UPI ID.</p></section>
+        <form class="flow-form" id="send-money-form" action="dashboard.html">
+          <div class="flow-field"><label for="recipient">Mobile number or UPI ID</label><input id="recipient" name="recipient" type="text" placeholder="e.g. rahul@upi" required /></div>
+          <div class="flow-field"><label for="amount">Amount</label><input id="amount" name="amount" type="number" min="1" step="0.01" placeholder="₹ 0.00" required /></div>
+          <div class="flow-field"><label for="note">Add a note <span aria-hidden="true">(optional)</span></label><input id="note" name="note" type="text" placeholder="What's this for?" /></div>
+          <div class="helper-note"><span aria-hidden="true">&#128274;</span><span>Your payment is protected with bank-grade security.</span></div>
+          <button class="form-submit green" type="submit">Continue to pay</button>
+          <p id="transaction-message" class="form-message" role="status"></p>
+        </form>
+      </div>
+    </main>
+    <nav class="bottom-nav" aria-label="Bottom navigation">
+      <a class="bottom-nav__item active" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a>
+      <a class="bottom-nav__item" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a>
+      <a class="bottom-nav__item" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a>
+    </nav>
+    <script src="api.js"></script>
+    <script>
+      const sendMoneyForm = document.querySelector('#send-money-form');
+      const transactionMessage = document.querySelector('#transaction-message');
+      const submitButton = sendMoneyForm.querySelector('button[type="submit"]');
+      sendMoneyForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(sendMoneyForm);
+        submitButton.disabled = true;
+        transactionMessage.textContent = 'Saving transaction...';
+        try {
+          await window.RVPayAPI.createTransaction({
+            recipientName: String(formData.get('recipient')).trim(),
+            amount: Number(formData.get('amount')),
+          });
+          window.location.href = sendMoneyForm.action;
+        } catch (error) {
+          transactionMessage.textContent = error.message;
+          submitButton.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
