@@ -2,7 +2,7 @@ window.RVPayAPI = (() => {
   const isLocalFrontend = ['localhost', '127.0.0.1'].includes(window.location.hostname);
   const baseUrl = isLocalFrontend
     ? 'http://localhost:3000/api'
-    : 'https://rvpay-backend.onrender.com/api';
+    : 'https://rvpay.onrender.com/api';
   const tokenKey = 'rvpay-api-token';
 
   const request = async (path, options = {}) => {
