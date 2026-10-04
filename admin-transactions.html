@@ -9,9 +9,27 @@
   </head>
   <body class="admin-body">
     <div class="admin-layout">
-      <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html">RV<span>Pay</span> Admin</a><nav class="admin-nav" aria-label="Admin navigation"><a href="admin-dashboard.html">Dashboard</a><a href="admin-users.html">Users</a><a class="active" href="admin-transactions.html">Transactions</a></nav></aside>
-      <main class="admin-main"><header class="admin-header"><div><h1>Transactions</h1><p>Review transactions saved by users.</p></div><a class="admin-link" href="admin-dashboard.html">Dashboard</a></header><p class="admin-empty" id="admin-message" role="status"></p><section class="admin-panel"><div class="admin-toolbar"><input id="transaction-search" type="search" placeholder="Search transactions" aria-label="Search transactions" /><input id="transaction-date" type="date" aria-label="Filter transactions by date" /></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Transaction ID</th><th>User / Recipient</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead><tbody id="transactions-body"></tbody></table><p class="admin-empty" id="transactions-empty" hidden>No transactions found.</p></div></section></main>
+      <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html">RV<span>Pay</span> Admin</a><nav class="admin-nav" aria-label="Admin navigation"><a href="admin-dashboard.html">Dashboard</a><a href="admin-users.html">Users</a><a href="admin-accounts.html">Accounts</a><a class="active" href="admin-transactions.html">Transactions</a></nav></aside>
+      <main class="admin-main"><header class="admin-header"><div><h1>Transactions</h1><p>Review transactions saved by users.</p></div><div class="admin-header-actions"><a class="admin-link" href="admin-dashboard.html">Dashboard</a><button class="admin-button admin-button--muted" type="button" data-admin-logout>Sign out</button></div></header><p class="admin-empty admin-message" id="admin-message" role="status"></p><section class="admin-panel"><div class="admin-toolbar"><input id="transaction-search" type="search" placeholder="Search transactions" aria-label="Search transactions" /><input id="transaction-date" type="date" aria-label="Filter transactions by date" /><select id="transaction-status" aria-label="Filter transactions by status"><option value="">All statuses</option><option>Pending</option><option>Success</option><option>Failed</option><option>Cancelled</option></select></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Transaction ID</th><th>User / Recipient</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead><tbody id="transactions-body"></tbody></table><p class="admin-empty" id="transactions-empty" hidden>No transactions found.</p></div></section></main>
     </div>
+    <dialog class="admin-dialog" id="transaction-details" aria-labelledby="transaction-details-title">
+      <div class="admin-dialog-header"><div><p class="admin-eyebrow">TRANSACTION RECORD</p><h2 id="transaction-details-title">Transaction details</h2></div><button class="admin-button admin-button--muted" type="button" data-close-details aria-label="Close transaction details">Close</button></div>
+      <dl class="admin-detail-list">
+        <div><dt>Transaction ID</dt><dd id="detail-transaction-id"></dd></div>
+        <div><dt>User</dt><dd id="detail-user"></dd></div>
+        <div><dt>Email</dt><dd id="detail-email"></dd></div>
+        <div><dt>Recipient</dt><dd id="detail-recipient"></dd></div>
+        <div><dt>Amount</dt><dd id="detail-amount"></dd></div>
+        <div><dt>Status</dt><dd id="detail-status"></dd></div>
+        <div><dt>Transaction date</dt><dd id="detail-date"></dd></div>
+        <div><dt>Created</dt><dd id="detail-created"></dd></div>
+      </dl>
+      <section class="admin-status-history" aria-labelledby="status-history-heading">
+        <h3 id="status-history-heading">Status history</h3>
+        <ol id="status-history-list"></ol>
+        <p class="admin-empty" id="status-history-empty" hidden>No status history recorded.</p>
+      </section>
+    </dialog>
     <script src="api.js"></script>
     <script src="admin.js"></script>
   </body>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RVPay | Admin Sign In</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body class="admin-body admin-login-body">
+    <main class="admin-login-shell">
+      <a class="admin-brand" href="admin-login.html">RV<span>Pay</span> Admin</a>
+      <section class="admin-login-panel" aria-labelledby="admin-login-title">
+        <p class="admin-eyebrow">SECURE ACCESS</p>
+        <h1 id="admin-login-title">Administrator sign in</h1>
+        <p class="admin-login-copy">Use your existing RVPay administrator account.</p>
+        <form id="admin-login-form">
+          <label for="admin-contact">Email or mobile</label>
+          <input id="admin-contact" name="contact" type="text" autocomplete="username" required />
+          <label for="admin-password">Password</label>
+          <input id="admin-password" name="password" type="password" autocomplete="current-password" required />
+          <p class="admin-login-message" id="admin-login-message" role="status" aria-live="polite"></p>
+          <button class="admin-login-submit" type="submit">Sign in</button>
+        </form>
+      </section>
+    </main>
+    <script src="api.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

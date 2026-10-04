@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Beneficiaries | RV Pay</title>
+    <link rel="stylesheet" href="dashboard.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="dashboard-shell flow-shell">
+      <div class="phone-frame">
+        <header class="flow-header manage-header">
+          <a class="back-link" href="dashboard.html" aria-label="Back to Home">&#8249;</a>
+          <div class="flow-heading"><h1>Beneficiaries</h1><p>Manage saved recipients</p></div>
+          <button class="add-account-button" id="add-beneficiary" type="button">+ Add</button>
+        </header>
+        <section class="flow-intro"><h2>Saved recipients</h2><p>Save a mobile number or UPI ID to select it when sending money.</p></section>
+        <label class="search-box beneficiary-search" for="beneficiary-search"><span aria-hidden="true">&#128269;</span><input id="beneficiary-search" type="search" placeholder="Search beneficiaries" autocomplete="off" /></label>
+        <p class="beneficiary-message" id="beneficiary-message" role="status" aria-live="polite"></p>
+        <section class="beneficiary-list" id="beneficiary-list" aria-label="Saved beneficiaries"></section>
+      </div>
+    </main>
+    <nav class="bottom-nav" aria-label="Bottom navigation">
+      <a class="bottom-nav__item" href="dashboard.html" aria-label="Home"><span class="bottom-nav__icon"><img src="asset/icon/account_balance_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Home</span></a>
+      <a class="bottom-nav__item" href="history.html" aria-label="History"><span class="bottom-nav__icon"><img src="asset/icon/history_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">History</span></a>
+      <a class="bottom-nav__item active" href="profile.html" aria-label="Profile"><span class="bottom-nav__icon"><img src="asset/icon/person_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="" /></span><span class="bottom-nav__label">Profile</span></a>
+    </nav>
+
+    <div class="modal-overlay" id="beneficiary-modal" hidden>
+      <section class="account-modal" role="dialog" aria-modal="true" aria-labelledby="beneficiary-modal-title">
+        <div class="modal-heading"><div><h2 id="beneficiary-modal-title">Add Beneficiary</h2><p>Save a recipient for future payments.</p></div><button class="modal-close" id="close-beneficiary-modal" type="button" aria-label="Close dialog">&times;</button></div>
+        <form class="modal-form" id="beneficiary-form">
+          <div class="flow-field"><label for="beneficiary-name">Name</label><input id="beneficiary-name" name="name" type="text" maxlength="120" autocomplete="name" required /></div>
+          <div class="flow-field"><label for="beneficiary-destination">Mobile number or UPI ID</label><input id="beneficiary-destination" name="destination" type="text" maxlength="200" placeholder="e.g. 9876543210 or name@upi" autocomplete="off" required /></div>
+          <p class="beneficiary-message" id="beneficiary-form-message" role="status" aria-live="polite"></p>
+          <div class="modal-actions"><button class="modal-cancel" id="cancel-beneficiary-modal" type="button">Cancel</button><button class="modal-submit" type="submit">Save Beneficiary</button></div>
+        </form>
+      </section>
+    </div>
+    <script src="api.js"></script>
+    <script src="beneficiaries.js"></script>
+  </body>
+</html>

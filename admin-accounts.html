@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RVPay | Admin Accounts</title>
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <a class="admin-brand" href="admin-dashboard.html">RV<span>Pay</span> Admin</a>
+        <nav class="admin-nav" aria-label="Admin navigation">
+          <a href="admin-dashboard.html">Dashboard</a>
+          <a href="admin-users.html">Users</a>
+          <a class="active" href="admin-accounts.html">Accounts</a>
+          <a href="admin-transactions.html">Transactions</a>
+        </nav>
+      </aside>
+      <main class="admin-main">
+        <header class="admin-header">
+          <div><h1>Linked Accounts</h1><p>Search bank accounts linked to application users.</p></div>
+          <div class="admin-header-actions"><a class="admin-link" href="admin-dashboard.html">Dashboard</a><button class="admin-button admin-button--muted" type="button" data-admin-logout>Sign out</button></div>
+        </header>
+        <p class="admin-empty admin-message" id="admin-message" role="status"></p>
+        <section class="admin-panel">
+          <div class="admin-toolbar"><input id="account-search" type="search" placeholder="Search user, bank, account holder, or IFSC" aria-label="Search linked accounts" /></div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>User</th><th>Email</th><th>Bank</th><th>Account Holder</th><th>Account</th><th>IFSC</th><th>Owner Details</th></tr></thead>
+              <tbody id="accounts-body"></tbody>
+            </table>
+            <p class="admin-empty" id="accounts-empty" hidden>No linked accounts found.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="api.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

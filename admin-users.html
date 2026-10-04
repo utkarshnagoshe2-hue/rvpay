@@ -9,9 +9,23 @@
   </head>
   <body class="admin-body">
     <div class="admin-layout">
-      <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html">RV<span>Pay</span> Admin</a><nav class="admin-nav" aria-label="Admin navigation"><a href="admin-dashboard.html">Dashboard</a><a class="active" href="admin-users.html">Users</a><a href="admin-transactions.html">Transactions</a></nav></aside>
-      <main class="admin-main"><header class="admin-header"><div><h1>Users</h1><p>Review and manage application users.</p></div><a class="admin-link" href="admin-dashboard.html">Dashboard</a></header><p class="admin-empty" id="admin-message" role="status"></p><section class="admin-panel"><div class="admin-toolbar"><input id="user-search" type="search" placeholder="Search users" aria-label="Search users" /></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Status</th><th>Actions</th></tr></thead><tbody id="users-body"></tbody></table><p class="admin-empty" id="users-empty" hidden>No users found.</p></div></section></main>
+      <aside class="admin-sidebar"><a class="admin-brand" href="admin-dashboard.html">RV<span>Pay</span> Admin</a><nav class="admin-nav" aria-label="Admin navigation"><a href="admin-dashboard.html">Dashboard</a><a class="active" href="admin-users.html">Users</a><a href="admin-accounts.html">Accounts</a><a href="admin-transactions.html">Transactions</a></nav></aside>
+      <main class="admin-main"><header class="admin-header"><div><h1>Users</h1><p>Review and manage application users.</p></div><div class="admin-header-actions"><a class="admin-link" href="admin-dashboard.html">Dashboard</a><button class="admin-button admin-button--muted" type="button" data-admin-logout>Sign out</button></div></header><p class="admin-empty admin-message" id="admin-message" role="status"></p><section class="admin-panel"><div class="admin-toolbar"><input id="user-search" type="search" placeholder="Search users" aria-label="Search users" /></div><div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Status</th><th>Actions</th></tr></thead><tbody id="users-body"></tbody></table><p class="admin-empty" id="users-empty" hidden>No users found.</p></div></section></main>
     </div>
+    <dialog class="admin-dialog" id="user-details-dialog" aria-labelledby="user-details-title">
+      <div class="admin-dialog-header"><div><p class="admin-eyebrow">USER RECORD</p><h2 id="user-details-title">User details</h2></div><button class="admin-button admin-button--muted" type="button" data-close-user-details aria-label="Close user details">Close</button></div>
+      <dl class="admin-detail-list">
+        <div><dt>Name</dt><dd id="user-detail-name"></dd></div>
+        <div><dt>Email</dt><dd id="user-detail-email"></dd></div>
+        <div><dt>Mobile</dt><dd id="user-detail-phone"></dd></div>
+        <div><dt>Role</dt><dd id="user-detail-role"></dd></div>
+        <div><dt>Status</dt><dd id="user-detail-status"></dd></div>
+        <div><dt>Joined</dt><dd id="user-detail-created"></dd></div>
+        <div><dt>Linked accounts</dt><dd id="user-detail-accounts"></dd></div>
+        <div><dt>Transactions</dt><dd id="user-detail-transactions"></dd></div>
+        <div><dt>Beneficiaries</dt><dd id="user-detail-beneficiaries"></dd></div>
+      </dl>
+    </dialog>
     <script src="api.js"></script>
     <script src="admin.js"></script>
   </body>

@@ -2,17 +2,21 @@ require('dotenv').config();
 
 const cors = require('cors');
 const express = require('express');
+const helmet = require('helmet');
 const mongoose = require('mongoose');
 const path = require('path');
 const accountRoutes = require('./routes/accountRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
+const beneficiaryRoutes = require('./routes/beneficiaryRoutes');
 const healthRoutes = require('./routes/healthRoutes');
 const profileRoutes = require('./routes/profileRoutes');
+const passwordResetRoutes = require('./routes/passwordResetRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const PasswordReset = require('./models/PasswordReset');
 const User = require('./models/User');
 const Account = require('./models/Account');
+const Beneficiary = require('./models/Beneficiary');
 const Transaction = require('./models/Transaction');
 const AuditLog = require('./models/AuditLog');
 const { encryptAccountNumber, getEncryptionKey, isEncryptedAccountNumber } = require('./services/accountEncryption');
@@ -72,16 +76,34 @@ app.use(cors({
     }
   },
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
+app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use('/api', apiLimiter);
+app.use(express.json({ limit: '32kb' }));
+app.use(express.urlencoded({ extended: true, limit: '32kb', parameterLimit: 100 }));
+app.use((request, response, next) => {
+  let requestPath;
+  try {
+    requestPath = path.posix.normalize(decodeURIComponent(request.path).replace(/\\/g, '/'));
+  } catch (error) {
+    return response.sendStatus(400);
+  }
+
+  const privateStaticPath = /^\/(?:controllers|middleware|models|routes|services|untitled|node_modules|\.git)(?:\/|$)/i.test(requestPath)
+    || /^\/(?:server\.js|render\.yaml|vercel\.json)$/i.test(requestPath)
+    || /\.(?:json|md|ya?ml|iml|log)$/i.test(requestPath)
+    || /(?:^|\/)\.[^/]+/.test(requestPath);
+  if (privateStaticPath) return response.sendStatus(404);
+  return next();
+});
+app.use(express.static(path.join(__dirname), { dotfiles: 'deny' }));
 
 app.use('/api', healthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/accounts', accountRoutes);
+app.use('/api/beneficiaries', beneficiaryRoutes);
 app.use('/api/transactions', transactionRoutes);
 
 const ensureCollections = async () => {
@@ -90,7 +112,7 @@ const ensureCollections = async () => {
     .toArray();
   const existingNames = new Set(existingCollections.map((collection) => collection.name));
 
-  const models = [User, Account, Transaction, PasswordReset, AuditLog];
+  const models = [User, Account, Beneficiary, Transaction, PasswordReset, AuditLog];
   await Promise.all(models
     .filter((model) => !existingNames.has(model.collection.collectionName))
     .map((model) => model.createCollection()));

@@ -13,7 +13,7 @@ const authenticate = async (request, response, next) => {
   if (!token) return response.status(401).json({ error: 'Authentication required.' });
 
   try {
-    const payload = jwt.verify(token, getJwtSecret());
+    const payload = jwt.verify(token, getJwtSecret(), { algorithms: ['HS256'] });
     const user = await User.findById(payload.sub);
 
     if (!user) return response.status(401).json({ error: 'Authentication required.' });

@@ -85,17 +85,17 @@ const updateAccount = async (request, response) => {
   if (!Object.keys(updates).length) {
     return response.status(400).json({ error: 'At least one account field is required.' });
   }
-  const currentAccount = await Account.findOne({ _id: request.params.id, user: request.user.id });
-  if (!currentAccount) return response.status(404).json({ error: 'Linked account not found.' });
-  const candidate = {
-    bankName: updates.bankName ?? currentAccount.bankName,
-    accountHolder: updates.accountHolder ?? currentAccount.accountHolder,
-    accountNumber: updates.accountNumber ? String(accountNumber ?? number).trim() : decryptAccountNumber(currentAccount.accountNumber),
-    ifsc: updates.ifsc ?? currentAccount.ifsc,
-  };
-  if (!isValidAccountDetails(candidate)) return response.status(400).json({ error: 'Please provide valid account details.' });
-
   try {
+    const currentAccount = await Account.findOne({ _id: request.params.id, user: request.user.id });
+    if (!currentAccount) return response.status(404).json({ error: 'Linked account not found.' });
+    const candidate = {
+      bankName: updates.bankName ?? currentAccount.bankName,
+      accountHolder: updates.accountHolder ?? currentAccount.accountHolder,
+      accountNumber: updates.accountNumber ? String(accountNumber ?? number).trim() : decryptAccountNumber(currentAccount.accountNumber),
+      ifsc: updates.ifsc ?? currentAccount.ifsc,
+    };
+    if (!isValidAccountDetails(candidate)) return response.status(400).json({ error: 'Please provide valid account details.' });
+
     const account = await Account.findOneAndUpdate(
       { _id: request.params.id, user: request.user.id },
       { $set: updates },

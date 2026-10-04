@@ -14,6 +14,40 @@
 - [ ] Back up the database before the first deploy. Startup migrates plaintext account numbers to encrypted values; verify this migration in staging first.
 - [ ] Promote the intended administrator in MongoDB after registering that account; do not expose admin role assignment through public registration.
 
+## Promote an Administrator
+
+1. Register the intended account through the normal application flow. Confirm the email address belongs to the person who will administer the application.
+2. Connect to the same production database configured by `MONGODB_URI` using an approved MongoDB access method. Do not paste database credentials into a shared terminal or commit them.
+3. Select the application database and run the following in `mongosh`, replacing the example email:
+
+	 ```javascript
+	 const email = 'admin@example.com'.trim().toLowerCase();
+	 const user = db.users.findOne(
+		 { email },
+		 { email: 1, role: 1, isBlocked: 1 }
+	 );
+
+	 if (!user) throw new Error('No user found for that email.');
+	 if (user.role && user.role !== 'user') throw new Error(`Unexpected current role: ${user.role}`);
+	 if (user.isBlocked) throw new Error('Unblock the account before promoting it.');
+
+	 const result = db.users.updateOne(
+		 { _id: user._id, role: { $in: ['user', null] } },
+		 { $set: { role: 'admin' } }
+	 );
+	 if (result.modifiedCount !== 1) throw new Error('Promotion did not update exactly one user.');
+
+	 db.users.findOne(
+		 { _id: user._id },
+		 { email: 1, role: 1, isBlocked: 1 }
+	 );
+	 ```
+
+4. Verify the result shows the intended email, `role: 'admin'`, and `isBlocked: false`. Record the operator and change in the deployment/change log because direct database updates do not pass through application audit logging.
+5. Sign in at `admin-login.html` with that account and verify the protected admin pages open. Public registration must continue to create only `user` roles.
+
+To revoke access, connect to the same database and run `db.users.updateOne({ _id: ObjectId('<user-id>'), role: 'admin' }, { $set: { role: 'user' } })`; verify `modifiedCount` is `1`. The backend loads the current role from MongoDB on each authenticated request, so the demotion takes effect on the next request.
+
 ## Production Readiness Blockers
 
 - [x] Restrict CORS to the exact configured production frontend origin; development allows localhost origins only.

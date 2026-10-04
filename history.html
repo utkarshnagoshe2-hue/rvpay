@@ -31,6 +31,15 @@
       let selectedStatus = 'all';
       let transactions = [];
 
+      ['Approved', 'Processing', 'Cancelled'].forEach((status) => {
+        const button = document.createElement('button');
+        button.className = 'status-chip';
+        button.type = 'button';
+        button.dataset.status = status;
+        button.textContent = status;
+        document.querySelector('.status-row').append(button);
+      });
+
       const getTransactionTime = (transaction) => {
         if (transaction.createdAt) return new Date(transaction.createdAt).getTime();
         const idTimestamp = String(transaction.transactionId || '').match(/^RV(\d{13})$/);
@@ -62,6 +71,23 @@
           card.className = 'transaction-card';
           card.innerHTML = `<div class="transaction-card__top"><span class="history-icon-badge purple">&#8599;</span><span class="transaction-status ${status.toLowerCase()}">${status}</span></div><div class="transaction-card__body"><div><span class="transaction-label">Recipient</span><strong></strong></div><strong class="history-amount">- ₹${Number(transaction.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></div><div class="transaction-card__meta"><span>ID: ${transactionId}</span><span>${transaction.date || 'Date unavailable'}${transaction.time ? `, ${transaction.time}` : ''}</span></div>`;
           card.querySelector('.transaction-card__body strong').textContent = recipient;
+          const statusHistory = transaction.statusHistory?.length
+            ? transaction.statusHistory
+            : [{ status, changedAt: transaction.createdAt || transaction.date, note: 'Initial status' }];
+          const timeline = document.createElement('details');
+          timeline.className = 'transaction-status-history';
+          const summary = document.createElement('summary');
+          summary.textContent = `Status history (${statusHistory.length})`;
+          const timelineList = document.createElement('ol');
+          statusHistory.forEach((entry) => {
+            const item = document.createElement('li');
+            const changedAt = new Date(entry.changedAt);
+            const changedAtText = Number.isFinite(changedAt.getTime()) ? changedAt.toLocaleString('en-IN') : 'Time unavailable';
+            item.textContent = `${entry.status} · ${changedAtText}${entry.note ? ` · ${entry.note}` : ''}`;
+            timelineList.append(item);
+          });
+          timeline.append(summary, timelineList);
+          card.append(timeline);
           historyList.insertBefore(card, emptyState);
           visibleCount += 1;
         });

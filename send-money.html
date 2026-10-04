@@ -16,7 +16,7 @@
         </header>
         <section class="flow-intro"><h2>Who would you like to pay?</h2><p>Send money instantly to a contact or UPI ID.</p></section>
         <form class="flow-form" id="send-money-form" action="dashboard.html">
-          <div class="flow-field"><label for="recipient">Mobile number or UPI ID</label><input id="recipient" name="recipient" type="text" placeholder="e.g. rahul@upi" required /></div>
+          <div class="flow-field"><label for="beneficiary">Pay to</label><select id="beneficiary" name="beneficiaryId" required disabled><option value="">Loading beneficiaries...</option></select><small class="beneficiary-help" id="beneficiary-help">Choose a saved beneficiary.</small><a class="beneficiary-manage-link" href="manage-beneficiaries.html">Manage beneficiaries</a></div>
           <div class="flow-field"><label for="amount">Amount</label><input id="amount" name="amount" type="number" min="1" step="0.01" placeholder="₹ 0.00" required /></div>
           <div class="flow-field"><label for="note">Add a note <span aria-hidden="true">(optional)</span></label><input id="note" name="note" type="text" placeholder="What's this for?" /></div>
           <div class="helper-note"><span aria-hidden="true">&#128274;</span><span>Your payment is protected with bank-grade security.</span></div>
@@ -34,7 +34,36 @@
     <script>
       const sendMoneyForm = document.querySelector('#send-money-form');
       const transactionMessage = document.querySelector('#transaction-message');
+      const beneficiarySelect = document.querySelector('#beneficiary');
+      const beneficiaryHelp = document.querySelector('#beneficiary-help');
       const submitButton = sendMoneyForm.querySelector('button[type="submit"]');
+      const loadBeneficiaries = async () => {
+        try {
+          const response = await window.RVPayAPI.getBeneficiaries();
+          const savedBeneficiaries = response.beneficiaries || [];
+          beneficiarySelect.replaceChildren();
+          const placeholder = document.createElement('option');
+          placeholder.value = '';
+          placeholder.textContent = savedBeneficiaries.length ? 'Select a beneficiary' : 'No saved beneficiaries';
+          beneficiarySelect.append(placeholder);
+          savedBeneficiaries.forEach((beneficiary) => {
+            const option = document.createElement('option');
+            option.value = beneficiary.id;
+            option.textContent = `${beneficiary.name} · ${beneficiary.destination}`;
+            beneficiarySelect.append(option);
+          });
+          beneficiarySelect.disabled = savedBeneficiaries.length === 0;
+          if (!savedBeneficiaries.length) beneficiaryHelp.textContent = 'Add a beneficiary before sending money.';
+        } catch (error) {
+          beneficiarySelect.replaceChildren();
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = 'Unable to load beneficiaries';
+          beneficiarySelect.append(option);
+          beneficiaryHelp.textContent = error.message;
+        }
+      };
+      loadBeneficiaries();
       sendMoneyForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(sendMoneyForm);
@@ -42,7 +71,7 @@
         transactionMessage.textContent = 'Saving transaction...';
         try {
           await window.RVPayAPI.createTransaction({
-            recipientName: String(formData.get('recipient')).trim(),
+            beneficiaryId: String(formData.get('beneficiaryId')),
             amount: Number(formData.get('amount')),
           });
           window.location.href = sendMoneyForm.action;

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Account = require('../models/Account');
+const AuditLog = require('../models/AuditLog');
+const Beneficiary = require('../models/Beneficiary');
 const PasswordReset = require('../models/PasswordReset');
 const Transaction = require('../models/Transaction');
 const User = require('../models/User');
@@ -15,6 +17,27 @@ const getUsers = async (request, response) => {
     return response.json({ users });
   } catch (error) {
     return response.status(500).json({ error: 'Unable to load users.' });
+  }
+};
+
+const getUserDetails = async (request, response) => {
+  const { id } = request.params;
+  if (!mongoose.isValidObjectId(id)) return response.status(400).json({ error: 'Invalid user ID.' });
+
+  try {
+    const user = await User.findById(id)
+      .select('name email phone role isBlocked createdAt')
+      .lean();
+    if (!user) return response.status(404).json({ error: 'User not found.' });
+
+    const [accounts, transactions, beneficiaries] = await Promise.all([
+      Account.countDocuments({ user: id }),
+      Transaction.countDocuments({ user: id }),
+      Beneficiary.countDocuments({ user: id }),
+    ]);
+    return response.json({ user, summary: { accounts, transactions, beneficiaries } });
+  } catch (error) {
+    return response.status(500).json({ error: 'Unable to load user details.' });
   }
 };
 
@@ -44,6 +67,7 @@ const getTransactions = async (request, response) => {
   try {
     const transactions = await Transaction.find()
       .populate('user', 'name email')
+      .populate('statusHistory.changedBy', 'name email')
       .sort({ date: -1, createdAt: -1 })
       .lean();
     return response.json({ transactions });
@@ -54,14 +78,46 @@ const getTransactions = async (request, response) => {
 
 const getOverview = async (request, response) => {
   try {
-    const [users, accounts, transactions] = await Promise.all([
+    const [users, accounts, transactionGroups] = await Promise.all([
       User.countDocuments(),
       Account.countDocuments(),
-      Transaction.countDocuments(),
+      Transaction.aggregate([
+        { $group: { _id: '$status', count: { $sum: 1 }, volume: { $sum: '$amount' } } },
+      ]),
     ]);
-    return response.json({ users, accounts, transactions });
+    const transactionStats = Object.fromEntries(transactionGroups.map((group) => [group._id, group]));
+    const transactions = transactionGroups.reduce((total, group) => total + group.count, 0);
+    const transactionVolume = transactionGroups.reduce((total, group) => total + group.volume, 0);
+    return response.json({
+      users,
+      accounts,
+      transactions,
+      transactionVolume,
+      successfulTransactions: transactionStats.Success?.count || 0,
+      pendingTransactions: transactionStats.Pending?.count || 0,
+    });
   } catch (error) {
     return response.status(500).json({ error: 'Unable to load admin overview.' });
+  }
+};
+
+const getActivity = async (request, response) => {
+  try {
+    const activity = await AuditLog.find()
+      .populate('actor', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(30)
+      .lean();
+    return response.json({ activity: activity.map((entry) => ({
+      id: String(entry._id),
+      actor: entry.actor ? { name: entry.actor.name, email: entry.actor.email } : null,
+      action: entry.action,
+      entityType: entry.entityType,
+      entityId: entry.entityId,
+      createdAt: entry.createdAt,
+    })) });
+  } catch (error) {
+    return response.status(500).json({ error: 'Unable to load admin activity.' });
   }
 };
 
@@ -101,6 +157,7 @@ const deleteUser = async (request, response) => {
 
     await Promise.all([
       Account.deleteMany({ user: user.id }),
+      Beneficiary.deleteMany({ user: user.id }),
       Transaction.deleteMany({ user: user.id }),
       PasswordReset.deleteMany({ user: user.id }),
     ]);
@@ -118,4 +175,4 @@ const deleteUser = async (request, response) => {
   }
 };
 
-module.exports = { deleteUser, getAccounts, getOverview, getTransactions, getUsers, setUserBlocked };
+module.exports = { deleteUser, getAccounts, getActivity, getOverview, getTransactions, getUserDetails, getUsers, setUserBlocked };

@@ -18,9 +18,17 @@ recoveryForm.addEventListener('submit', async (event) => {
 
   resetButton.disabled = true;
   resetButton.querySelector('span').textContent = '...';
-  recoveryMessage.textContent = 'Checking your account...';
-  await new Promise((resolve) => setTimeout(resolve, 650));
-  resetButton.disabled = false;
-  resetButton.querySelector('span').textContent = '\u2192';
-  recoveryMessage.textContent = 'If an account matches, reset instructions will be sent shortly.';
+  recoveryMessage.classList.remove('form-message--error');
+  recoveryMessage.textContent = 'Sending reset instructions...';
+  try {
+    const result = await window.RVPayAPI.requestPasswordReset(contact);
+    recoveryMessage.textContent = result.message || 'If an account matches, reset instructions will be sent shortly.';
+    recoveryForm.reset();
+  } catch (error) {
+    recoveryMessage.classList.add('form-message--error');
+    recoveryMessage.textContent = error.message || 'Unable to send reset instructions. Try again.';
+  } finally {
+    resetButton.disabled = false;
+    resetButton.querySelector('span').textContent = '\u2192';
+  }
 });
